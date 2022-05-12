@@ -16,9 +16,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         window?.windowScene = windowScene
         window?.makeKeyAndVisible()
-        let viewContoller = ViewController()
-        let navController = UINavigationController(rootViewController: viewContoller)
-        window?.rootViewController = navController
+        let pageViewContoller = PageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
+      //  let navController = UINavigationController(rootViewController: pageViewContoller)
+        window?.rootViewController = pageViewContoller
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {

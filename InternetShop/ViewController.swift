@@ -12,7 +12,7 @@ class ViewController: UIViewController {
     let welcomelabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 23, weight: .semibold)
-        label.backgroundColor = .systemPink
+        label.backgroundColor = UIColor(red: 66/255, green: 100/255, blue: 57/255, alpha: 1.0)
         label.textColor = .white
         label.layer.cornerRadius = 20
         label.layer.borderWidth = 1.0
@@ -79,8 +79,8 @@ class ViewController: UIViewController {
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setImage(UIImage(systemName: "key"), for: .normal)
         button.setImage(UIImage(systemName: "key.fill"), for: .highlighted)
-        button.imageView?.tintColor = UIColor(red: 35/255, green: 34/255, blue: 51/255, alpha: 1.0)
-        button.backgroundColor = UIColor(red: 138/255, green: 130/255, blue: 180/255, alpha: 1.0)
+        button.imageView?.tintColor = .white
+        button.backgroundColor = UIColor(red: 66/255, green: 100/255, blue: 57/255, alpha: 1.0)
         button.layer.cornerRadius = 20
         button.layer.borderWidth = 0.5
         button.layer.borderColor = UIColor.black.cgColor
@@ -90,7 +90,7 @@ class ViewController: UIViewController {
         let imageView = UIImageView()
         imageView.image = UIImage(systemName: "person.circle")
         imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.tintColor = .systemPink
+        imageView.tintColor = UIColor(red: 66/255, green: 100/255, blue: 57/255, alpha: 1.0)
         return imageView
     }()
     override func viewDidLoad() {
@@ -154,7 +154,7 @@ class ViewController: UIViewController {
         NSLayoutConstraint.activate([
             enterButton.topAnchor.constraint(equalTo: passTextField.bottomAnchor, constant: 70),
             enterButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            enterButton.widthAnchor.constraint(equalToConstant: 270),
+            enterButton.widthAnchor.constraint(equalToConstant: 350),
             enterButton.heightAnchor.constraint(equalToConstant: 70)
         ])
     }
@@ -162,9 +162,9 @@ class ViewController: UIViewController {
 extension UITextField {
     func addImageToTextField(_ img: UIImage){
         let view = UIView(frame: CGRect(x:0, y:0, width: img.size.width + 5, height: img.size.height))
-        let imageView = UIImageView(frame: CGRect(x:0, y:0, width: img.size.width, height: img.size.height))
+        let imageView = UIImageView(frame: CGRect(x:0, y:-1, width: img.size.width, height: img.size.height))
         imageView.image = img
-        imageView.tintColor = .systemPink
+        imageView.tintColor = .darkGray
         view.addSubview(imageView)
         self.leftView = view
         self.leftViewMode = .always
