@@ -83,6 +83,7 @@ class ViewController: UIViewController {
         field.layer.cornerRadius = 5
         field.layer.borderWidth = 0.1
         field.layer.borderColor = UIColor.black.cgColor
+        field.isSecureTextEntry = true
         field.translatesAutoresizingMaskIntoConstraints = false
         field.addImageToTextField(UIImage(systemName:"lock")!)
         return field
@@ -268,12 +269,14 @@ class ViewController: UIViewController {
                 }
                 self.loadingView()
                 
-                DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(4)) {
+                DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(1)) {
                     self.loading = false
                     let vc = MainViewController()
+                    
                     let navVC = UINavigationController(rootViewController: vc)
                     navVC.modalPresentationStyle = .fullScreen
                     self.present(navVC, animated: true)
+                    
                     DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(1)) {
                         for view in self.viewsArray {
                             self.view.addSubview(view)
