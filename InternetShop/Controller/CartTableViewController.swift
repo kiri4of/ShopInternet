@@ -37,7 +37,7 @@ class CartTableViewController: UITableViewController {
         present(alert, animated: true)
     }
  
-
+    //BUG FIX
     // MARK: - DataSource
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return menuArray.count
