@@ -7,11 +7,13 @@
 
 import UIKit
 
+var dispatchGroup = DispatchGroup()
+
 class MenuCollectionViewCell: UICollectionViewCell {
     
     static let identifier = "MenuCollectionViewCell"
     
-    private let imageView: UIImageView = {
+     let imageView: UIImageView = {
        let imageV = UIImageView()
         imageV.contentMode = .scaleAspectFit
         imageV.backgroundColor = .clear
@@ -19,7 +21,7 @@ class MenuCollectionViewCell: UICollectionViewCell {
         return imageV
     }()
     
-    private let nameLabel: UILabel = {
+     let nameLabel: UILabel = {
        let label = UILabel()
         label.textColor = .black
        // label.backgroundColor = .lightGray
@@ -29,20 +31,36 @@ class MenuCollectionViewCell: UICollectionViewCell {
         return label
     }()
     
-    func configurate(_ menu: Menu){
-     
-       
-        guard let image = menu.imageName else { return }
+    var loadingDelegate: LoadingProtocol?
+    
+    func configurate(_ menu: Menu, index: Int, menuCount: Int){
+        guard let url = menu.imageURL else { return }
         guard let name = menu.name else { return }
         
         contentView.layer.borderColor = UIColor.black.cgColor
         contentView.layer.borderWidth = 0.05
         
-        imageView.image = UIImage(named: image)
+        //imageView.image = UIImage(named: image) // тут
+        //dispatchGroup.enter()
+    //    getFetch(imageView: imageView, menuItem: menu)
+        getFetchData(urlString: url) { result in
+            switch result {
+            case .success(let data):
+                DispatchQueue.main.async {
+                    self.imageView.image = UIImage(data: data)
+                }
+            case .failure(let error):
+                print("error")
+            }
+        }
+        //dispatchGroup.leave()
         nameLabel.text = name
         self.contentView.addSubview(imageView)
         self.contentView.addSubview(nameLabel)
         configurateConstraints()
+        if index == menuCount-1 {
+            loadingDelegate?.update(loading: false)
+        }
     }
     
     func configurateConstraints(){
@@ -64,3 +82,5 @@ class MenuCollectionViewCell: UICollectionViewCell {
     }
     
 }
+
+

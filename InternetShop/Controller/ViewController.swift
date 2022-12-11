@@ -9,48 +9,6 @@ import UIKit
 
 class ViewController: UIViewController {
     
-    //For Animations
-    lazy var animationViewContainer: UIView = {
-        let view = UIView()
-        view.backgroundColor = .clear
-        view.frame = CGRect(x: 0, y: 0, width: 100, height: 100)
-        view.center.x = self.view.center.x
-        view.center.y = self.view.center.y * 0.75
-        return view
-    }()
-    var cirle1: UIView = {
-        let view = UIView()
-        view.backgroundColor = .clear
-        view.frame = CGRect(x: 0, y: 0, width: 40, height: 40)
-        return view
-    }()
-    var cirle2: UIView = {
-        let view = UIView()
-        view.backgroundColor = .clear
-        view.frame = CGRect(x: 100-40, y: 0, width: 40, height: 40)
-        return view
-    }()
-    var cirle3: UIView = {
-        let view = UIView()
-        view.backgroundColor = .clear
-        view.frame = CGRect(x: 100-40, y: 100-40, width: 40, height: 40)
-        return view
-    }()
-    var cirle4: UIView = {
-        let view = UIView()
-        view.backgroundColor = .clear
-        view.frame = CGRect(x: 0, y: 100-40, width: 40, height: 40)
-        return view
-    }()
-    
-    lazy var circles = [cirle1,cirle2,cirle3,cirle4]
-    var cirleIndex = 0
-    var randomIndex = 0
-    
-    var colors: [UIColor] = [#colorLiteral(red: 0.32390064, green: 0.4138930738, blue: 0.9091263413, alpha: 0.5), #colorLiteral(red: 0.8235835433, green: 0.5749723315, blue: 0, alpha: 0.5), #colorLiteral(red: 0.8078431487, green: 0.02745098062, blue: 0.3333333433, alpha: 0.5), #colorLiteral(red: 0.09879464656, green: 0.3816201091, blue: 0.2502036691, alpha: 0.5), #colorLiteral(red: 0.1019607857, green: 0.2784313858, blue: 0.400000006, alpha: 0.5), #colorLiteral(red: 0.3647058904, green: 0.06666667014, blue: 0.9686274529, alpha: 0.5), #colorLiteral(red: 1, green: 0.2204911709, blue: 0.2471658289, alpha: 0.5), #colorLiteral(red: 0.9568627477, green: 0.6588235497, blue: 0.5450980663, alpha: 0.5), #colorLiteral(red: 0.9372549057, green: 0.3490196168, blue: 0.1921568662, alpha: 0.5), #colorLiteral(red: 1, green: 0.71805197, blue: 1, alpha: 0.5)]
-    
-    var loading = false
-    //
     let welcomelabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 23, weight: .semibold)
@@ -124,19 +82,16 @@ class ViewController: UIViewController {
         return imageView
     }()
     var viewsArray: [UIView] = []
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.title = "Welcome"
-        viewsArray = [welcomelabel,loginTextField,passTextField,loginLabel,passLabel,enterButton,userImageView]
         
+        viewsArray = [welcomelabel,loginTextField,passTextField,loginLabel,passLabel,enterButton,userImageView]
+        loginTextField.delegate = self
+        passTextField.delegate = self
         self.view.backgroundColor = .white
-        //animation
-        self.view.addSubview(animationViewContainer)
-        for view in circles {
-            self.animationViewContainer.addSubview(view)
-        }
-        setUpCircles()
-        //
+        
         for view in viewsArray {
             self.view.addSubview(view)
         }
@@ -195,69 +150,22 @@ class ViewController: UIViewController {
             enterButton.heightAnchor.constraint(equalToConstant: 70)
         ])
     }
-    //MARK: -For Animation Funcs
-    func setUpCircles(){
-        randomIndex = Int.random(in: 0...colors.count - 1)
-        animationViewContainer.isUserInteractionEnabled = false
-        
-        for circle in circles {
-            circle.layer.cornerRadius = circle.frame.height / 2
-            circle.backgroundColor = .clear
-            circle.isUserInteractionEnabled = false
-        }
-//        circles.forEach { cirlce in
-//            cirlce.layer.cornerRadius = cirlce.frame.height/2
-//            cirlce.backgroundColor = .clear
-//            cirlce.isUserInteractionEnabled = false
-//        }
-    }
     
-    func nextCircle(){
-        randomIndex = Int.random(in: 0...colors.count - 1)
-        if cirleIndex == circles.count - 1 {
-            cirleIndex = 0
-        }
-        else {
-            cirleIndex += 1
+    //На будущее чтобы вернуться к Логин Экрану и все вьюшки были готовы
+    func returnTheViews() {
+        DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(2)) {
+            for view in self.viewsArray {
+                self.view.addSubview(view)
+                view.alpha = 1
+            }
+            self.configurateConstraints()
+            
         }
     }
     
-    func loadingView(){
-        var flag = false //для проверки на то остались еще вью на экране
-        
-        for view in viewsArray {
-            if self.view.contains(view){
-                flag = true
-                break
-            }
-        }
-        
-        if !flag {  //будет фолс но делаем тру чтобы сработало
-            self.startAnimateCirlcles()
-        } else {
-            print("Вью не удалилась")
-        }
-    }
-    func startAnimateCirlcles(){
-        circles[cirleIndex].backgroundColor = colors[randomIndex].withAlphaComponent(0)
-         UIView.animate(withDuration: 0.4) {
-            self.circles[self.cirleIndex].backgroundColor = self.colors[self.randomIndex].withAlphaComponent(0.8)
-        } completion: { success in
-            self.circles[self.cirleIndex].backgroundColor = self.colors[self.randomIndex].withAlphaComponent(0)
-            
-            self.nextCircle()
-          
-            if self.loading == true {
-                self.startAnimateCirlcles()
-            }
-            
-        }
-        
-    }
     //MARK: - Objc func
     @objc func didTapEnterButton(){
-        loading = true
-
+        //анимация потухания интерфейса
         UIView.animate(withDuration: 1, delay: 0.3, options: .curveLinear) {
             for view in self.viewsArray {
                 view.alpha = 0
@@ -267,31 +175,21 @@ class ViewController: UIViewController {
                 for view in self.viewsArray {
                     view.removeFromSuperview()
                 }
-                self.loadingView()
-                
-                DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(1)) {
-                    self.loading = false
-                    let vc = MainViewController()
-                    
-                    let navVC = UINavigationController(rootViewController: vc)
-                    navVC.modalPresentationStyle = .fullScreen
-                    self.present(navVC, animated: true)
-                    
-                    DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(1)) {
-                        for view in self.viewsArray {
-                            self.view.addSubview(view)
-                            view.alpha = 1
-                        }
-                        self.configurateConstraints()
-                        
-                    }
-                   
+                let vc = MainViewController()
+                vc.animation.loading = true
+                let navVC = UINavigationController(rootViewController: vc)
+                navVC.modalPresentationStyle = .fullScreen
+                UIView.animate(withDuration: 0.1, delay: 0) {
+                    self.present(navVC, animated: false)
                 }
+                
             }
-            
-            
         }
-        
+        returnTheViews()
+    }
+    
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        view.endEditing(true)
     }
 }
 extension UITextField {
@@ -305,3 +203,11 @@ extension UITextField {
         self.leftViewMode = .always
     }
 }
+extension ViewController: UITextFieldDelegate {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        return true
+    }
+    
+}
+

@@ -7,10 +7,11 @@
 
 import Foundation
 
+
+
 struct Menu {
-    var name: String? //опциональный тип когда с интеренета
-    var imageName: String?
+    var name: String? //опциональный тип когда с интеренета идет подкачка файлов
+    var imageURL: String?
+    
 }
-
-
 

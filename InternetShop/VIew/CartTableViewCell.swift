@@ -13,7 +13,7 @@ class CartTableViewCell: UITableViewCell {
     
     var price = 0.00
     
-    private let productImageView: UIImageView = {
+     let productImageView: UIImageView = {
        let imageV = UIImageView()
         imageV.contentMode = .scaleAspectFit
         imageV.backgroundColor = .clear
@@ -45,20 +45,31 @@ class CartTableViewCell: UITableViewCell {
         contentView.addSubview(productImageView)
         contentView.addSubview(nameLabel)
         contentView.addSubview(priceLabel)
-        guard let imageName = menu.imageName else {return}
+        guard let imageURL = menu.imageURL else {return}
         guard let labelName = menu.name else {return}
-        productImageView.image = UIImage(named: imageName)
+        //productImageView.image = UIImage(named: imageName)
+       //getFetch(imageView: productImageView, menuItem: menu)
+        getFetchData(urlString: imageURL) { result in
+            switch result {
+            case .success(let data):
+                DispatchQueue.main.async {
+                    self.productImageView.image = UIImage(data: data)
+                }
+            case .failure(let error):
+                print("error")
+            }
+        }
         nameLabel.text = labelName
         setPriceForMenu(menuItem: menu)
         configurateConstraints()
     }
     
     func setPriceForMenu(menuItem: Menu){
-        if menuItem.imageName == "burger" {
+        if menuItem.name == "Burger" {
             price = 34.75
-        } else if menuItem.imageName == "cola" {
+        } else if menuItem.name == "Cola" {
             price = 24.75
-        } else if menuItem.imageName == "salat" {
+        } else if menuItem.name == "Salat" {
             price = 22.75
         }
         

@@ -15,7 +15,7 @@ class PresentViewController: UIViewController {
     
     var menuItem: Menu?
     
-   weak var delegate: presentVCDelegate? //всегда weak чтобы не было цикла сильных ссылок
+   weak var delegate: presentVCDelegate? //всегда weak чтобы не было цикла сильных ссылок (Тг MiamiBeach есть такой вопрос)
     
     let buttonAdd: UIButton = {
         let button = UIButton(type: .system)
@@ -55,6 +55,7 @@ class PresentViewController: UIViewController {
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
+    var image = UIImage()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -64,9 +65,11 @@ class PresentViewController: UIViewController {
         self.view.addSubview(buttonAdd)
         self.view.addSubview(priceLabel)
         //substitute the data
-        guard let imageName = menuItem?.imageName else {return}
+        guard let imageURL = menuItem?.imageURL else {return}
         guard let labelName = menuItem?.name  else {return}
-        imageView.image = UIImage(named: imageName)
+      //imageView.image = UIImage(named: imageName) // тут данные с апишки
+       // getFetch(imageView: imageView, menuItem: menuItem)
+        imageView.image = image
         nameLabel.text = labelName
         //
         setPriceForMenu()
@@ -77,7 +80,7 @@ class PresentViewController: UIViewController {
  //  public var completion: ((Menu?) -> Void)?
     
     func configurateConstraints(){
-        
+    
         NSLayoutConstraint.activate([
         //imageView
             imageView.topAnchor.constraint(equalTo: view.topAnchor, constant: 30),
@@ -105,29 +108,25 @@ class PresentViewController: UIViewController {
     func setPriceForMenu(){
         var price = 0.00
         
-        if menuItem?.imageName == "burger" {
+        if menuItem?.name == "Burger" {
             price = 34.75
-        } else if menuItem?.imageName == "cola" {
+        } else if menuItem?.name == "Cola" {
             price = 24.75
         }
-        else if menuItem?.imageName == "salat" {
+        else if menuItem?.name == "Salat" {
             price = 22.75
         }
         priceLabel.text = "\(price) czk"
     }
     
     @objc func didTapAddButton(){
-       // let menu = Menu(name: nameLabel.text , imageName: self.imageName)
-        //let vc = CartTableViewController() //Корзина
-        //vc.menuArray
-        //completion?(menu)
-//        NotificationCenter.default.post(name: Notification.Name("takeMenu"), object: menu)
-        
-        //new
         guard let menuItem = menuItem else {return}
         
         delegate?.sendData(menu: menuItem) //пробрасываем назад по нажатию | (от куда пробрасываем)
         dismiss(animated: true)
+    }
+    deinit {
+        print("свободен Презент")
     }
 }
 

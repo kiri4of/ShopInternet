@@ -56,10 +56,17 @@ class CartTableViewController: UITableViewController {
     
     // MARK: - Delegate
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+       
         let vc = PresentViewController()
+        let cell = tableView.cellForRow(at: indexPath) as! CartTableViewCell
         vc.menuItem = menuArray[indexPath.row]
+        vc.image = cell.productImageView.image!
         vc.buttonAdd.isHidden = true
         present(vc, animated: true)
+        tableView.deselectRow(at: indexPath, animated: true)
+    }
+    deinit {
+        print("свободен Тейбл")
     }
 }
     
