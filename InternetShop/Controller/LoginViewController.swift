@@ -6,21 +6,32 @@
 //
 
 import UIKit
+import Firebase
 
-class ViewController: UIViewController {
+class LoginViewController: UIViewController {
+    
+     let welcomeLabelHelper: UIView = {
+       let view = UIView()
+        view.layer.shadowOffset = CGSize(width: 0, height: 5)
+        view.layer.shadowOpacity = 0.2
+        view.layer.shadowRadius = 5
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
     
     let welcomelabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 23, weight: .semibold)
         label.backgroundColor = UIColor(red: 66/255, green: 100/255, blue: 57/255, alpha: 1.0)
         label.textColor = .white
-        label.layer.cornerRadius = 20
-        label.layer.borderWidth = 1.0
-        label.layer.borderColor = UIColor.black.cgColor
         label.text = "Welcome"
         label.textAlignment = .center
         label.clipsToBounds = true
         label.translatesAutoresizingMaskIntoConstraints = false
+        label.layer.cornerRadius = 20
+        
+//        label.layer.borderWidth = 1.0
+//        label.layer.borderColor = UIColor.black.cgColor
         return label
     }()
     let loginTextField: UITextField = {
@@ -68,9 +79,13 @@ class ViewController: UIViewController {
         button.setImage(UIImage(systemName: "key.fill"), for: .highlighted)
         button.imageView?.tintColor = .white
         button.backgroundColor = UIColor(red: 66/255, green: 100/255, blue: 57/255, alpha: 1.0)
+        //layer
+        button.layer.shadowOffset = CGSize(width: 0, height: 5)
+        button.layer.shadowRadius = 5
+        button.layer.shadowOpacity = 0.5
         button.layer.cornerRadius = 20
-        button.layer.borderWidth = 0.5
-        button.layer.borderColor = UIColor.black.cgColor
+//        button.layer.borderWidth = 0.5
+//        button.layer.borderColor = UIColor.black.cgColor
         button.addTarget(self, action: #selector(didTapEnterButton), for: .touchUpInside)
         return button
     }()
@@ -81,13 +96,26 @@ class ViewController: UIViewController {
         imageView.tintColor = UIColor(red: 66/255, green: 100/255, blue: 57/255, alpha: 1.0)
         return imageView
     }()
+    
+    let errorLabel: UILabel = {
+       let label = UILabel()
+        label.text = ""
+        label.alpha = 0
+        label.textColor = .systemRed
+        label.textAlignment = .center
+        label.font = UIFont.systemFont(ofSize: 20, weight: .medium)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
     var viewsArray: [UIView] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
         self.title = "Welcome"
         
-        viewsArray = [welcomelabel,loginTextField,passTextField,loginLabel,passLabel,enterButton,userImageView]
+        welcomeLabelHelper.addSubview(welcomelabel)
+        viewsArray = [welcomeLabelHelper,loginTextField,passTextField,loginLabel,passLabel,enterButton,userImageView,errorLabel]
         loginTextField.delegate = self
         passTextField.delegate = self
         self.view.backgroundColor = .white
@@ -98,14 +126,19 @@ class ViewController: UIViewController {
         configurateConstraints()
         
     }
-    
+    //MARK: - Functions
     func configurateConstraints(){
         //WelcomeLabel
         NSLayoutConstraint.activate([
             welcomelabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 100),
             welcomelabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             welcomelabel.widthAnchor.constraint(equalToConstant: 350),
-            welcomelabel.heightAnchor.constraint(equalToConstant: 70)
+            welcomelabel.heightAnchor.constraint(equalToConstant: 70),
+            
+            welcomeLabelHelper.topAnchor.constraint(equalTo: view.topAnchor, constant: 100),
+            welcomeLabelHelper.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            welcomeLabelHelper.widthAnchor.constraint(equalToConstant: 350),
+            welcomeLabelHelper.heightAnchor.constraint(equalToConstant: 70),
         ])
         //Login
         NSLayoutConstraint.activate([
@@ -149,6 +182,11 @@ class ViewController: UIViewController {
             enterButton.widthAnchor.constraint(equalToConstant: 350),
             enterButton.heightAnchor.constraint(equalToConstant: 70)
         ])
+        //ErrorLabel
+        NSLayoutConstraint.activate([
+            errorLabel.topAnchor.constraint(equalTo: welcomelabel.bottomAnchor, constant: 20),
+            errorLabel.centerXAnchor.constraint(equalTo: welcomelabel.centerXAnchor),
+        ])
     }
     
     //На будущее чтобы вернуться к Логин Экрану и все вьюшки были готовы
@@ -163,35 +201,67 @@ class ViewController: UIViewController {
         }
     }
     
+    func displayErrorIfNeeded(_ text: String){
+        errorLabel.text = text
+        
+        UIView.animate(withDuration: 3, delay: 0, options: [.curveEaseInOut]) {
+            self.errorLabel.alpha = 1
+        } completion: { _ in
+            self.errorLabel.alpha = 0
+        }
+
+    }
+    
     //MARK: - Objc func
     @objc func didTapEnterButton(){
-        //анимация потухания интерфейса
-        UIView.animate(withDuration: 1, delay: 0.3, options: .curveLinear) {
-            for view in self.viewsArray {
-                view.alpha = 0
-            }
-        } completion: { flag in
-            if flag {
-                for view in self.viewsArray {
-                    view.removeFromSuperview()
-                }
-                let vc = MainViewController()
-                vc.animation.loading = true
-                let navVC = UINavigationController(rootViewController: vc)
-                navVC.modalPresentationStyle = .fullScreen
-                UIView.animate(withDuration: 0.1, delay: 0) {
-                    self.present(navVC, animated: false)
-                }
-                
-            }
+        guard let email = loginTextField.text, let password = passTextField.text, email != "", password != "" else {
+            displayErrorIfNeeded("Fields are empty!")
+            return
         }
-        returnTheViews()
+        
+        Auth.auth().signIn(withEmail: email, password: password) { result, error in
+            
+            guard error == nil else {
+                self.displayErrorIfNeeded("Error occured!")
+                return
+            }
+            
+            if result != nil {
+                //анимация потухания интерфейса
+                UIView.animate(withDuration: 1, delay: 0.3, options: .curveLinear) {
+                    for view in self.viewsArray {
+                        view.alpha = 0
+                    }
+                } completion: { flag in
+                    if flag {
+                        for view in self.viewsArray {
+                            view.removeFromSuperview()
+                        }
+                        let vc = MainViewController()
+                        vc.animation.loading = true
+                        let navVC = UINavigationController(rootViewController: vc)
+                        navVC.modalPresentationStyle = .fullScreen
+                        UIView.animate(withDuration: 0.1, delay: 0) {
+                            self.present(navVC, animated: false)
+                        }
+                        
+                    }
+                }
+                self.returnTheViews()
+            } else {
+                self.displayErrorIfNeeded("No such user!")
+            }
+            
+        }
+        
+        
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         view.endEditing(true)
     }
 }
+//MARK: - extensions
 extension UITextField {
     func addImageToTextField(_ img: UIImage){
         let view = UIView(frame: CGRect(x:0, y:0, width: img.size.width + 5, height: img.size.height))
@@ -203,7 +273,7 @@ extension UITextField {
         self.leftViewMode = .always
     }
 }
-extension ViewController: UITextFieldDelegate {
+extension LoginViewController: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
         return true

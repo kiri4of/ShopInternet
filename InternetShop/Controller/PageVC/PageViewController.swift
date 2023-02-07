@@ -47,7 +47,7 @@ class PageViewController: UIPageViewController {
         let firstPage = PreviewViewController(pageWith: PageHelper(name: " Добро пожаловать в интернет магазин  100%nature", image: firstImage))
         let secondPage = PreviewViewController(pageWith: PageHelper(name: "Здесь можно преобрести разную еду, на ваш выбор!", image: secondImage))
         let lastPage = PreviewViewController(pageWith: PageHelper(name: "Все просто, добавил в корзину, оплатил, получил!", image: lastImage))
-        let loginVC = ViewController()
+        let loginVC = LoginViewController()
         
         pages.append(firstPage)
         pages.append(secondPage)
@@ -73,6 +73,9 @@ class PageViewController: UIPageViewController {
         nextButton.setTitle("Next", for: .normal)
         nextButton.backgroundColor = UIColor(red: 66/255, green: 100/255, blue: 57/255, alpha: 1.0)
         nextButton.layer.cornerRadius = 15
+        nextButton.layer.shadowRadius = 5
+        nextButton.layer.shadowOffset = CGSize(width: 0, height: 5)
+        nextButton.layer.shadowOpacity = 0.5
         nextButton.addTarget(self, action: #selector(goNextPage), for: .touchUpInside)
         //skip
         skipButton.translatesAutoresizingMaskIntoConstraints = false
