@@ -7,10 +7,6 @@
 
 import UIKit
 
-protocol presentVCDelegate: AnyObject { //вообще в отдельном файле надо
-    func sendData(menu: Menu)
-}
-
 class PresentViewController: UIViewController {
     
     var menuItem: Menu?

@@ -17,7 +17,7 @@ class CartTableViewCell: UITableViewCell {
        let imageV = UIImageView()
         imageV.contentMode = .scaleAspectFit
         imageV.backgroundColor = .clear
-         imageV.clipsToBounds
+        imageV.clipsToBounds
         imageV.translatesAutoresizingMaskIntoConstraints = false
         return imageV
     }()

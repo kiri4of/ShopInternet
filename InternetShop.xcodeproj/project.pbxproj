@@ -8,12 +8,13 @@
 
 /* Begin PBXBuildFile section */
 		F70001DD2874AC6D00277FD4 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F70001DC2874AC6D00277FD4 /* MainViewController.swift */; };
-		F72856DE299292F1007463E1 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = F72856DD299292F1007463E1 /* GoogleService-Info.plist */; };
 		F72856E129929427007463E1 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = F72856E029929427007463E1 /* FirebaseAnalytics */; };
 		F72856E329929427007463E1 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = F72856E229929427007463E1 /* FirebaseAuth */; };
 		F72856E529929427007463E1 /* FirebaseAuthCombine-Community in Frameworks */ = {isa = PBXBuildFile; productRef = F72856E429929427007463E1 /* FirebaseAuthCombine-Community */; };
 		F72856E729929427007463E1 /* FirebaseDatabase in Frameworks */ = {isa = PBXBuildFile; productRef = F72856E629929427007463E1 /* FirebaseDatabase */; };
 		F72856E929929427007463E1 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = F72856E829929427007463E1 /* FirebaseStorage */; };
+		F72856ED2992CCC3007463E1 /* RegisterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F72856EC2992CCC3007463E1 /* RegisterViewController.swift */; };
+		F72856F129942AD2007463E1 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = F72856F029942AD2007463E1 /* GoogleService-Info.plist */; };
 		F729BE0B287C58A0004C7BF6 /* PresentViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F729BE0A287C58A0004C7BF6 /* PresentViewController.swift */; };
 		F729BE0D287C7934004C7BF6 /* CartTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F729BE0C287C7934004C7BF6 /* CartTableViewController.swift */; };
 		F729BE0F287C7975004C7BF6 /* CartTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F729BE0E287C7975004C7BF6 /* CartTableViewCell.swift */; };
@@ -38,8 +39,9 @@
 		5BF194E2CCEB8A603FAD340F /* Pods-InternetShop.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-InternetShop.release.xcconfig"; path = "Target Support Files/Pods-InternetShop/Pods-InternetShop.release.xcconfig"; sourceTree = "<group>"; };
 		949651BBFC74495C715328B1 /* Pods_InternetShop.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_InternetShop.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F70001DC2874AC6D00277FD4 /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
-		F72856DD299292F1007463E1 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		F72856EB29929821007463E1 /* InternetShop.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = InternetShop.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		F72856EC2992CCC3007463E1 /* RegisterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterViewController.swift; sourceTree = "<group>"; };
+		F72856F029942AD2007463E1 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		F729BE0A287C58A0004C7BF6 /* PresentViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresentViewController.swift; sourceTree = "<group>"; };
 		F729BE0C287C7934004C7BF6 /* CartTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CartTableViewController.swift; sourceTree = "<group>"; };
 		F729BE0E287C7975004C7BF6 /* CartTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CartTableViewCell.swift; sourceTree = "<group>"; };
@@ -108,6 +110,7 @@
 			isa = PBXGroup;
 			children = (
 				F7D1234B2810378F0008A0A5 /* LoginViewController.swift */,
+				F72856EC2992CCC3007463E1 /* RegisterViewController.swift */,
 				F70001DC2874AC6D00277FD4 /* MainViewController.swift */,
 				F729BE0A287C58A0004C7BF6 /* PresentViewController.swift */,
 				F729BE0C287C7934004C7BF6 /* CartTableViewController.swift */,
@@ -156,8 +159,8 @@
 				F7D1234D2810378F0008A0A5 /* Main.storyboard */,
 				F7D12350281037910008A0A5 /* Assets.xcassets */,
 				F7D12352281037910008A0A5 /* LaunchScreen.storyboard */,
+				F72856F029942AD2007463E1 /* GoogleService-Info.plist */,
 				F7D12355281037910008A0A5 /* Info.plist */,
-				F72856DD299292F1007463E1 /* GoogleService-Info.plist */,
 			);
 			path = InternetShop;
 			sourceTree = "<group>";
@@ -232,7 +235,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F7D12354281037910008A0A5 /* LaunchScreen.storyboard in Resources */,
-				F72856DE299292F1007463E1 /* GoogleService-Info.plist in Resources */,
+				F72856F129942AD2007463E1 /* GoogleService-Info.plist in Resources */,
 				F7D12351281037910008A0A5 /* Assets.xcassets in Resources */,
 				F7D1234F2810378F0008A0A5 /* Main.storyboard in Resources */,
 			);
@@ -281,6 +284,7 @@
 				F7D1234C2810378F0008A0A5 /* LoginViewController.swift in Sources */,
 				F7D123482810378F0008A0A5 /* AppDelegate.swift in Sources */,
 				F7D8BC68294158B3000FD7EA /* Protocols.swift in Sources */,
+				F72856ED2992CCC3007463E1 /* RegisterViewController.swift in Sources */,
 				F7D1234A2810378F0008A0A5 /* SceneDelegate.swift in Sources */,
 				F7A3B8E228284BDD0087B666 /* PreviewViewController.swift in Sources */,
 				F7D8BC6A2942B8F6000FD7EA /* Animation.swift in Sources */,

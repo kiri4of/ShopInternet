@@ -22,7 +22,6 @@ class CartTableViewController: UITableViewController {
         tableView.register(CartTableViewCell.self, forCellReuseIdentifier: CartTableViewCell.identifier)
         //print("\(menuArray[0].name) - \(menuArray.count) - \(menuArray[0].imageName)")
         navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "applelogo"), style: .done, target: self, action: #selector(didTapAppleLogo))
-        
     }
     
     //MARK: - Fucntions
@@ -32,8 +31,11 @@ class CartTableViewController: UITableViewController {
         stringImage = (stringImage ?? "Apple") + "Pay"
         
         let alert = UIAlertController(title: "\(amountPrice)czk to be paid", message: "Choose payment method", preferredStyle: .actionSheet)
-        alert.addAction(UIAlertAction(title: "Pay", style: .default))
-        alert.addAction(UIAlertAction(title: "Google Pay", style: .default))
+        let appleAction = UIAlertAction(title: "Pay", style: .default)
+        let googleAction = UIAlertAction(title: "Google Pay", style: .default)
+        alert.addAction(appleAction)
+        alert.addAction(googleAction)
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
         present(alert, animated: true)
     }
  
@@ -84,3 +86,4 @@ extension UIImage {
         return data?.base64EncodedString(options: .endLineWithLineFeed)
     }
 }
+

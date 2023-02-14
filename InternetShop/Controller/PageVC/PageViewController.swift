@@ -48,11 +48,11 @@ class PageViewController: UIPageViewController {
         let secondPage = PreviewViewController(pageWith: PageHelper(name: "Здесь можно преобрести разную еду, на ваш выбор!", image: secondImage))
         let lastPage = PreviewViewController(pageWith: PageHelper(name: "Все просто, добавил в корзину, оплатил, получил!", image: lastImage))
         let loginVC = LoginViewController()
-        
+        let navVC = UINavigationController(rootViewController: loginVC)
         pages.append(firstPage)
         pages.append(secondPage)
         pages.append(lastPage)
-        pages.append(loginVC)
+        pages.append(navVC)
         //Устанавливаем контрллер который первым увидят
         setViewControllers([pages[initialPage]], direction: .forward, animated: true, completion: nil)
         

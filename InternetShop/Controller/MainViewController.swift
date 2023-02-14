@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Firebase
 
 class MainViewController: UIViewController {
     
@@ -27,15 +28,14 @@ class MainViewController: UIViewController {
     var menuImagesArray = [UIImage]()
     var flag = true
     var garbageArray = [Menu]()  //куда будем получать данные обратно
-    var loadingDelegate: LoadingProtocol?
     var itemsMenu = [MenuCollectionViewCell]()
     var animation = Animation()
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        configurateAllImages()  //Тут задержка дабы загрузились картинки
         configurateAnimation()
         letsAnimate()
-       // configurateAllImages()
         self.view.backgroundColor = .white
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .organize, target: self, action: #selector(didTapCartButton))
         //CollectionView
@@ -43,23 +43,50 @@ class MainViewController: UIViewController {
         collectionView.dataSource = self
         self.view.addSubview(collectionView)
         collectionView.frame = view.bounds
-
+        makeSignOutButton()
     }
     
-//    func configurateAllImages(){
-//        getFetchDataFromURLs(URLs: menuArray) { result in
+    func configurateAllImages(){
+        getFetchDataFromURLs(URLs: menuArray) { result in
+            switch result {
+            case .success(let dataArr):
+                    for data in dataArr {
+                        print(Thread.current)
+                        guard let image = UIImage(data: data) else {return}
+                        self.menuImagesArray.append(image)
+                    }
+            case .failure(let error):
+                print(error.localizedDescription)
+            }
+            DispatchQueue.main.async {
+                //sleep(1)
+                self.stopAnimation(loading: false)
+                self.collectionView.reloadData()
+            }
+            
+        }
+        
+//        getFetchData(urlString: menuArray[0].imageURL!) { result in
 //            switch result {
-//            case .success(let dataArr):
-//                    for data in dataArr {
-//                        print(Thread.current)
-//                        guard let image = UIImage(data: data) else {return}
-//                        self.menuImagesArray.append(image)
-//                    }
+//            case .success(let data):
+//                guard let image = UIImage(data: data) else {return}
+//                self.menuImagesArray.append(image)
 //            case .failure(let error):
 //                print(error.localizedDescription)
 //            }
+//            DispatchQueue.main.async {
+//                self.stopAnimation(loading: false)
+//                self.collectionView.reloadData()
+//            }
 //        }
-//    }
+    }
+    
+    //MARK: - Functions
+    
+    func makeSignOutButton(){
+        navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Sign Out", style: .done, target: self, action: #selector(didTapSignOut))
+        
+    }
     
     func letsAnimate() {
         animation.startAnimateCirlcles()
@@ -81,15 +108,23 @@ class MainViewController: UIViewController {
         animation.setUpCircles()
     }
     
+    
+    
     @objc func didTapCartButton(){
         let vcCart = CartTableViewController() //заново создаее с новыми элементами (ссылочный тип,сколько бы не было указывают на один объект)
         vcCart.menuArray = garbageArray
         self.navigationController?.pushViewController(vcCart, animated: true)
     }
     
-    deinit {
-        print("свободен Мейн")
+    @objc func didTapSignOut(){
+        do{
+           try Auth.auth().signOut()
+        } catch {
+            print(error.localizedDescription)
+        }
+        dismiss(animated: true)
     }
+    
 }
 
 extension MainViewController: UICollectionViewDataSource{
@@ -97,15 +132,14 @@ extension MainViewController: UICollectionViewDataSource{
         guard let itemCell = collectionView.dequeueReusableCell(withReuseIdentifier: MenuCollectionViewCell.identifier, for: indexPath) as? MenuCollectionViewCell
         else { return UICollectionViewCell()}
         itemCell.loadingDelegate = self
-        itemCell.configurate(menuArray[indexPath.row], index: indexPath.row, menuCount: menuArray.count)
-        
+        itemCell.configurate(menuArray[indexPath.row],image: menuImagesArray[indexPath.row])
         return itemCell
     }
     
     //Трайнуть notify у групп в GCD (Глобальная группа в которую добавляют и по ее окончанию ебануть false)
     
     public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return menuArray.count
+        return menuImagesArray.count
     }
 }
 
@@ -151,5 +185,10 @@ extension MainViewController: LoadingProtocol {
 }
 
 
-//Тень для конпки
-// оплата + кнопка отмена + анимация покупки(просто загрузка по кругу) и дз от свифтбука поCALayer
+
+// оплата
+//кнопка отмена - 
+//анимация покупки(просто загрузка по кругу) -
+//signOut +
+//допилить анимацию с помощью dispathGroup +
+//Заменить array на dictionary мб мб мб мб мб

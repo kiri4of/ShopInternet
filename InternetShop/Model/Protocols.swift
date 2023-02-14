@@ -10,3 +10,7 @@ import Foundation
 protocol LoadingProtocol {
     func update(loading: Bool)
 }
+
+protocol presentVCDelegate: AnyObject { 
+    func sendData(menu: Menu)
+}

@@ -10,7 +10,7 @@ import Firebase
 
 class LoginViewController: UIViewController {
     
-     let welcomeLabelHelper: UIView = {
+    private let welcomeLabelHelper: UIView = {
        let view = UIView()
         view.layer.shadowOffset = CGSize(width: 0, height: 5)
         view.layer.shadowOpacity = 0.2
@@ -19,7 +19,7 @@ class LoginViewController: UIViewController {
         return view
     }()
     
-    let welcomelabel: UILabel = {
+    private let welcomelabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 23, weight: .semibold)
         label.backgroundColor = UIColor(red: 66/255, green: 100/255, blue: 57/255, alpha: 1.0)
@@ -34,18 +34,20 @@ class LoginViewController: UIViewController {
 //        label.layer.borderColor = UIColor.black.cgColor
         return label
     }()
-    let loginTextField: UITextField = {
+    private let loginTextField: UITextField = {
         let field = UITextField()
         field.placeholder = "Enter login..."
         field.backgroundColor = .systemGray6
         field.layer.cornerRadius = 5
         field.layer.borderWidth = 0.1
         field.layer.borderColor = UIColor.black.cgColor
+        field.keyboardType = .emailAddress
+        field.autocorrectionType = .no
         field.translatesAutoresizingMaskIntoConstraints = false
         field.addImageToTextField(UIImage(systemName: "person")!)
         return field
     }()
-    let passTextField: UITextField = {
+    private let passTextField: UITextField = {
         let field = UITextField()
         field.placeholder = "Enter password..."
         field.backgroundColor = .systemGray6
@@ -57,21 +59,21 @@ class LoginViewController: UIViewController {
         field.addImageToTextField(UIImage(systemName:"lock")!)
         return field
     }()
-    let loginLabel: UILabel = {
+    private let loginLabel: UILabel = {
         let label = UILabel()
         label.text = "Login"
         label.textColor = .systemGray
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
-    let passLabel: UILabel = {
+    private let passLabel: UILabel = {
         let label = UILabel()
         label.text = "Password"
         label.textColor = .systemGray
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
-    let enterButton: UIButton = {
+    private let enterButton: UIButton = {
         let button = UIButton(type: .custom)
         button.setTitle("", for: .normal)
         button.translatesAutoresizingMaskIntoConstraints = false
@@ -89,15 +91,15 @@ class LoginViewController: UIViewController {
         button.addTarget(self, action: #selector(didTapEnterButton), for: .touchUpInside)
         return button
     }()
-    let userImageView: UIImageView = {
+    private let userImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.image = UIImage(systemName: "person.circle")
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.tintColor = UIColor(red: 66/255, green: 100/255, blue: 57/255, alpha: 1.0)
         return imageView
     }()
-    
-    let errorLabel: UILabel = {
+
+    private let errorLabel: UILabel = {
        let label = UILabel()
         label.text = ""
         label.alpha = 0
@@ -108,26 +110,53 @@ class LoginViewController: UIViewController {
         return label
     }()
     
-    var viewsArray: [UIView] = []
+    private let registerButton: UIButton = {
+        let button = UIButton(type: .custom)
+        button.setTitle("Register", for: .normal)
+        button.setTitleColor(.lightGray, for: .normal)
+       // button.backgroundColor = UIColor(red: 66/255, green: 100/255, blue: 57/255, alpha: 1.0)
+        button.addTarget(self, action: #selector(didTapRegisterButton), for: .touchUpInside)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
+    }()
+    
+    
+    private var viewsArray: [UIView] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
         self.title = "Welcome"
-        
-        welcomeLabelHelper.addSubview(welcomelabel)
-        viewsArray = [welcomeLabelHelper,loginTextField,passTextField,loginLabel,passLabel,enterButton,userImageView,errorLabel]
         loginTextField.delegate = self
         passTextField.delegate = self
+        configurateViews()
+        Auth.auth().addStateDidChangeListener { auth, user in
+            if user != nil {
+                self.hideViewsAndGoNext()
+            }
+        }
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        loginTextField.text = ""
+        passTextField.text = ""
+    }
+    
+    private func configurateViews() {
+        welcomeLabelHelper.addSubview(welcomelabel)
+        viewsArray = [welcomeLabelHelper,loginTextField,passTextField,loginLabel,passLabel,enterButton,userImageView,errorLabel,registerButton]
         self.view.backgroundColor = .white
-        
         for view in viewsArray {
             self.view.addSubview(view)
         }
         configurateConstraints()
-        
+        keyboardSettings()
     }
+
+    
+    
     //MARK: - Functions
-    func configurateConstraints(){
+    private func configurateConstraints(){
         //WelcomeLabel
         NSLayoutConstraint.activate([
             welcomelabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 100),
@@ -187,10 +216,24 @@ class LoginViewController: UIViewController {
             errorLabel.topAnchor.constraint(equalTo: welcomelabel.bottomAnchor, constant: 20),
             errorLabel.centerXAnchor.constraint(equalTo: welcomelabel.centerXAnchor),
         ])
+        //RegisterButton
+        NSLayoutConstraint.activate([
+            registerButton.topAnchor.constraint(equalTo: enterButton.bottomAnchor, constant: 50),
+            registerButton.centerXAnchor.constraint(equalTo: enterButton.centerXAnchor),
+        ])
+    }
+    
+   private func keyboardSettings(){
+        
+        let tap = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+        view.addGestureRecognizer(tap)
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(didHideKeyboard), name: UIResponder.keyboardWillHideNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(didShowKeyboard), name: UIResponder.keyboardWillShowNotification, object: nil)
     }
     
     //На будущее чтобы вернуться к Логин Экрану и все вьюшки были готовы
-    func returnTheViews() {
+    private func returnTheViews() {
         DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(2)) {
             for view in self.viewsArray {
                 self.view.addSubview(view)
@@ -201,7 +244,7 @@ class LoginViewController: UIViewController {
         }
     }
     
-    func displayErrorIfNeeded(_ text: String){
+    private func displayErrorIfNeeded(_ text: String){
         errorLabel.text = text
         
         UIView.animate(withDuration: 3, delay: 0, options: [.curveEaseInOut]) {
@@ -210,6 +253,28 @@ class LoginViewController: UIViewController {
             self.errorLabel.alpha = 0
         }
 
+    }
+    
+    private func hideViewsAndGoNext(){
+        UIView.animate(withDuration: 1, delay: 0.3, options: .curveLinear) {
+            for view in self.viewsArray {
+                view.alpha = 0
+            }
+        } completion: { flag in
+            if flag {
+                for view in self.viewsArray {
+                    view.removeFromSuperview()
+                }
+                let vc = MainViewController()
+                vc.animation.loading = true
+                let navVC = UINavigationController(rootViewController: vc)
+                navVC.modalPresentationStyle = .fullScreen
+                UIView.animate(withDuration: 0.1, delay: 0) {
+                    self.present(navVC, animated: false)
+                }
+            }
+        }
+        self.returnTheViews()
     }
     
     //MARK: - Objc func
@@ -227,36 +292,38 @@ class LoginViewController: UIViewController {
             }
             
             if result != nil {
-                //анимация потухания интерфейса
-                UIView.animate(withDuration: 1, delay: 0.3, options: .curveLinear) {
-                    for view in self.viewsArray {
-                        view.alpha = 0
-                    }
-                } completion: { flag in
-                    if flag {
-                        for view in self.viewsArray {
-                            view.removeFromSuperview()
-                        }
-                        let vc = MainViewController()
-                        vc.animation.loading = true
-                        let navVC = UINavigationController(rootViewController: vc)
-                        navVC.modalPresentationStyle = .fullScreen
-                        UIView.animate(withDuration: 0.1, delay: 0) {
-                            self.present(navVC, animated: false)
-                        }
-                        
-                    }
-                }
-                self.returnTheViews()
+                self.hideViewsAndGoNext()
             } else {
                 self.displayErrorIfNeeded("No such user!")
             }
             
         }
-        
-        
+
     }
     
+    @objc func didTapRegisterButton(){
+        let registerVC = RegisterViewController()
+        navigationController?.pushViewController(registerVC, animated: true)
+        //present(navVc, animated: true)
+    }
+    
+    @objc func didShowKeyboard(notification: Notification) {
+        if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
+                if self.view.frame.origin.y == 0 {
+                    self.view.frame.origin.y -= keyboardSize.height - 150
+                }
+            }
+    }
+    
+    @objc func didHideKeyboard() {
+        if self.view.frame.origin.y != 0 {
+                self.view.frame.origin.y = 0
+            }
+    }
+    
+    @objc func dismissKeyboard() {
+        self.view.endEditing(true)
+    }
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         view.endEditing(true)
     }
@@ -276,8 +343,8 @@ extension UITextField {
 extension LoginViewController: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
-        return true
-    }
+        return true    }
     
 }
+
 

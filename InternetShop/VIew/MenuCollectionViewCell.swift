@@ -7,7 +7,7 @@
 
 import UIKit
 
-var dispatchGroup = DispatchGroup()
+//var dispatchGroup = DispatchGroup()
 
 class MenuCollectionViewCell: UICollectionViewCell {
     
@@ -33,7 +33,7 @@ class MenuCollectionViewCell: UICollectionViewCell {
     
     var loadingDelegate: LoadingProtocol?
     
-    func configurate(_ menu: Menu, index: Int, menuCount: Int){
+    func configurate(_ menu: Menu, image: UIImage){
         guard let url = menu.imageURL else { return }
         guard let name = menu.name else { return }
         
@@ -42,25 +42,28 @@ class MenuCollectionViewCell: UICollectionViewCell {
         
         //imageView.image = UIImage(named: image) // тут
         //dispatchGroup.enter()
-    //    getFetch(imageView: imageView, menuItem: menu)
-        getFetchData(urlString: url) { result in
-            switch result {
-            case .success(let data):
-                DispatchQueue.main.async {
-                    self.imageView.image = UIImage(data: data)
-                }
-            case .failure(let error):
-                print("error")
-            }
-        }
+//        getFetchData(urlString: url) { result in
+//            switch result {
+//            case .success(let data):
+//                DispatchQueue.main.async {
+//                    self.imageView.image = UIImage(data: data)
+//                }
+//            case .failure(let error):
+//                print("error")
+//            }
+//        }
         //dispatchGroup.leave()
+        self.imageView.image = image
         nameLabel.text = name
         self.contentView.addSubview(imageView)
         self.contentView.addSubview(nameLabel)
         configurateConstraints()
-        if index == menuCount-1 {
-            loadingDelegate?.update(loading: false)
-        }
+//        if index == menuCount-1 { //когда будет ласт картинка то анимация остановится
+//          //  loadingDelegate?.update(loading: false)
+//            completion(true)
+//        } else {
+//            completion(false)
+//        }
     }
     
     func configurateConstraints(){
