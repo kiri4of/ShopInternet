@@ -30,9 +30,11 @@ class MainViewController: UIViewController {
     var garbageArray = [Menu]()  //куда будем получать данные обратно
     var itemsMenu = [MenuCollectionViewCell]()
     var animation = Animation()
+    var ref: DatabaseReference!
     
     override func viewDidLoad() {
         super.viewDidLoad()
+   
         configurateAllImages()  //Тут задержка дабы загрузились картинки
         configurateAnimation()
         letsAnimate()
@@ -45,7 +47,7 @@ class MainViewController: UIViewController {
         collectionView.frame = view.bounds
         makeSignOutButton()
     }
-    
+
     func configurateAllImages(){
         getFetchDataFromURLs(URLs: menuArray) { result in
             switch result {
@@ -112,6 +114,7 @@ class MainViewController: UIViewController {
     
     @objc func didTapCartButton(){
         let vcCart = CartTableViewController() //заново создаее с новыми элементами (ссылочный тип,сколько бы не было указывают на один объект)
+        vcCart.delegate = self
         vcCart.menuArray = garbageArray
         self.navigationController?.pushViewController(vcCart, animated: true)
     }
@@ -131,7 +134,7 @@ extension MainViewController: UICollectionViewDataSource{
     public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let itemCell = collectionView.dequeueReusableCell(withReuseIdentifier: MenuCollectionViewCell.identifier, for: indexPath) as? MenuCollectionViewCell
         else { return UICollectionViewCell()}
-        itemCell.loadingDelegate = self
+        //itemCell.loadingDelegate = self
         itemCell.configurate(menuArray[indexPath.row],image: menuImagesArray[indexPath.row])
         return itemCell
     }
@@ -151,6 +154,7 @@ extension MainViewController: UICollectionViewDelegate {
         vc.delegate = self //без weak получается цикл сильных ссылок
         vc.menuItem = menuArray[indexPath.row] //section для collectionView
         vc.image = cell.imageView.image!
+        vc.stackView.isHidden = true
         present(vc, animated: true)
     }
     
@@ -175,20 +179,21 @@ extension MainViewController: presentVCDelegate {
         print("Menu - \(menu.name) - \(menu.imageURL)")
         garbageArray.append(menu)
     }
-    
 }
 
-extension MainViewController: LoadingProtocol {
-    func update(loading: Bool) {
-        self.stopAnimation(loading: loading)
+extension MainViewController: UpdateProtocol {
+    func updateMenu(menuArray: [Menu]) {
+        garbageArray = menuArray
     }
 }
 
 
 
-// оплата
-//кнопка отмена - 
-//анимация покупки(просто загрузка по кругу) -
+
+//оплата кнопка отмена +
+//анимация покупки(просто загрузка по кругу) -+ хз куда влепить
 //signOut +
 //допилить анимацию с помощью dispathGroup +
-//Заменить array на dictionary мб мб мб мб мб
+//Добавить FirebaseDB к корзине +
+//Решить проблему с повторением (мб добавив количество которое будет увеличиваться с каждым разом при нажатии на кнопку добавления, думай крч бля ГЕНИЙ ПОКОЛЕНИЯ, да да Я!!!)
+

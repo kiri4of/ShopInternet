@@ -14,3 +14,7 @@ protocol LoadingProtocol {
 protocol presentVCDelegate: AnyObject { 
     func sendData(menu: Menu)
 }
+
+protocol UpdateProtocol: AnyObject {
+    func updateMenu(menuArray: [Menu])
+}

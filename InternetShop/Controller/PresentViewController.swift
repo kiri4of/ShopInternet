@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Firebase
 
 class PresentViewController: UIViewController {
     
@@ -45,35 +46,114 @@ class PresentViewController: UIViewController {
     private let priceLabel: UILabel = {
        let label = UILabel()
         label.textColor = .black
-       // label.backgroundColor = .lightGray
         label.font = .systemFont(ofSize: 19, weight: .medium)
         label.textAlignment = .center
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
+    
+    private let plusButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.setTitleColor(.black, for: .normal)
+        button.setTitle("+", for: .normal)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 30, weight: .light)
+        button.backgroundColor = .systemGreen
+        button.layer.cornerRadius = 5
+        button.clipsToBounds = true
+        button.addTarget(self, action: #selector(didTapPlusButton), for: .touchUpInside)
+        return button
+    }()
+    
+   
+    
+    private let minusButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.setTitleColor(.black, for: .normal)
+        button.setTitle("-", for: .normal)
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 30, weight: .light)
+        button.backgroundColor = .systemRed
+        button.layer.cornerRadius = 5
+        button.clipsToBounds = true
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.addTarget(self, action:#selector(didTapMinusButton), for: .touchUpInside)
+        
+        return button
+    }()
+    
+    private let countLabel: UILabel = {
+        let label = UILabel()
+        label.text = ""
+        label.textColor = .black
+        label.textAlignment = .center
+        label.font = UIFont.systemFont(ofSize: 30, weight: .regular)
+       
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
+    let stackView: UIStackView = {
+        let stackView =  UIStackView()
+        stackView.axis = .horizontal
+        stackView.distribution = .fillEqually
+        stackView.alignment = .fill
+        stackView.spacing = 10
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        return stackView
+    }()
+
     var image = UIImage()
+    var ref: DatabaseReference!
+    var user: User!
+    var count = 1
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        guard let currentUser = Auth.auth().currentUser else {return}
+        user = currentUser
+        ref = Database.database(url: "https://internetshop-8e932-default-rtdb.firebaseio.com").reference(withPath: "users").child(user.uid).child("cart")
+        
+        viewConfigurate()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        ref.observe(.value) { snapshot in
+            
+            for item in snapshot.children {
+                let _menuItem = Menu(snapshot: item as! DataSnapshot)
+                if _menuItem.name == self.menuItem?.name {
+                    self.count = _menuItem.count ?? 1
+                    self.countLabel.text = String(describing: self.count)
+                    if self.count == 1 {
+                        self.minusButton.isUserInteractionEnabled = false
+                        self.minusButton.backgroundColor = .lightGray
+                    }
+                }
+            }
+            self.setPriceForMenu()
+        }
+    }
+    
+ //  public var completion: ((Menu?) -> Void)?
+    
+    func viewConfigurate(){
         self.view.backgroundColor = .white
         self.view.addSubview(imageView)
         self.view.addSubview(nameLabel)
         self.view.addSubview(buttonAdd)
         self.view.addSubview(priceLabel)
+        self.view.addSubview(stackView)
+        stackView.addArrangedSubview(plusButton)
+        stackView.addArrangedSubview(countLabel)
+        stackView.addArrangedSubview(minusButton)
         //substitute the data
         guard let imageURL = menuItem?.imageURL else {return}
         guard let labelName = menuItem?.name  else {return}
-      //imageView.image = UIImage(named: imageName) // тут данные с апишки
-       // getFetch(imageView: imageView, menuItem: menuItem)
         imageView.image = image
         nameLabel.text = labelName
-        //
-        setPriceForMenu()
         //constraints
         configurateConstraints()
     }
-    
- //  public var completion: ((Menu?) -> Void)?
     
     func configurateConstraints(){
     
@@ -97,8 +177,26 @@ class PresentViewController: UIViewController {
             priceLabel.bottomAnchor.constraint(equalTo: buttonAdd.topAnchor, constant: -50),
             priceLabel.centerXAnchor.constraint(equalTo: buttonAdd.centerXAnchor),
             priceLabel.widthAnchor.constraint(equalToConstant: 150),
-            priceLabel.heightAnchor.constraint(equalToConstant: 30)
+            priceLabel.heightAnchor.constraint(equalToConstant: 30),
+            //stackView
+            stackView.centerXAnchor.constraint(equalTo: priceLabel.centerXAnchor),
+            stackView.topAnchor.constraint(equalTo: priceLabel.bottomAnchor, constant: 10),
+            //stackView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -105),
+            stackView.heightAnchor.constraint(equalToConstant: 33)
+        
         ])
+    }
+    
+    func observeAndUpdateCount() {
+        ref.observe(.value) { snapshot in
+            
+            for item in snapshot.children {
+                let _menuItem = Menu(snapshot: item as! DataSnapshot)
+                if _menuItem.name == self.menuItem?.name {
+                    _menuItem.ref?.updateChildValues(["count": self.count])
+                }
+            }
+        }
     }
     
     func setPriceForMenu(){
@@ -112,17 +210,49 @@ class PresentViewController: UIViewController {
         else if menuItem?.name == "Salat" {
             price = 22.75
         }
-        priceLabel.text = "\(price) czk"
+        if stackView.isHidden {
+            priceLabel.text = "\(price) czk"
+        } else {
+            priceLabel.text = "\(price * Double(count)) czk"
+        }
+        
+    }
+    
+    @objc func didTapPlusButton(){
+        minusButton.isUserInteractionEnabled = true
+        minusButton.backgroundColor = .systemRed
+        count += 1
+        countLabel.text = String(describing: count)
+        observeAndUpdateCount()
+    }
+    
+    @objc func didTapMinusButton(){
+       
+        if count > 1 {
+            count -= 1
+            countLabel.text = String(describing: count)
+            observeAndUpdateCount()
+            if count == 1 {
+                minusButton.isUserInteractionEnabled = false
+                minusButton.backgroundColor = .lightGray
+            }
+        }
     }
     
     @objc func didTapAddButton(){
         guard let menuItem = menuItem else {return}
+        let _menuItem = Menu(name: menuItem.name, imageURL: menuItem.imageURL, userId: user.uid, count: count)
         
-        delegate?.sendData(menu: menuItem) //пробрасываем назад по нажатию | (от куда пробрасываем)
+        let menuRef = ref.child((menuItem.name.lowercased()))
+        menuRef.setValue(_menuItem.convertToDictionary()) { error, reference in
+            if let error = error {
+                print(error.localizedDescription)
+            }
+        }
+        observeAndUpdateCount()
+        //delegate?.sendData(menu: _menuItem) //пробрасываем назад по нажатию | (от куда пробрасываем)
+        count += 1
         dismiss(animated: true)
-    }
-    deinit {
-        print("свободен Презент")
     }
 }
 

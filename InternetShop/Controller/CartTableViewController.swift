@@ -6,22 +6,45 @@
 //
 
 import UIKit
+import Firebase
 
 class CartTableViewController: UITableViewController {
 
+    weak var delegate: UpdateProtocol?
+    
     var priceValue = ""
     
     var menuArray = [Menu]()
     
     var amountPrice = 0.0
     
-  //  var observer: NSObjectProtocol?
+    var animatedCircle: AnimatedCircle! //на будущее если придумаю куда всунуть
+    
+    var ref: DatabaseReference!
+    
+    var user: User!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.register(CartTableViewCell.self, forCellReuseIdentifier: CartTableViewCell.identifier)
-        //print("\(menuArray[0].name) - \(menuArray.count) - \(menuArray[0].imageName)")
         navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "applelogo"), style: .done, target: self, action: #selector(didTapAppleLogo))
+        
+       guard let currentUser = Auth.auth().currentUser else {return}
+        user = currentUser
+        ref = Database.database(url: "https://internetshop-8e932-default-rtdb.firebaseio.com").reference(withPath: "users").child(user.uid).child("cart") //Тк у нас путь users/user/cart/...
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        ref.observe(.value) { snapshot in
+            var _menuArray = [Menu]()
+            for item in snapshot.children {
+            let menuItem = Menu(snapshot: item as! DataSnapshot)
+                _menuArray.append(menuItem)
+            }
+            self.menuArray = _menuArray
+            self.tableView.reloadData()
+        }
     }
     
     //MARK: - Fucntions
@@ -29,8 +52,7 @@ class CartTableViewController: UITableViewController {
         let myImage = UIImage(systemName: "applelogo")
         var stringImage = myImage?.toPngString()
         stringImage = (stringImage ?? "Apple") + "Pay"
-        
-        let alert = UIAlertController(title: "\(amountPrice)czk to be paid", message: "Choose payment method", preferredStyle: .actionSheet)
+        let alert = UIAlertController(title: "\(amountPrice) czk to be paid", message: "Choose payment method", preferredStyle: .actionSheet)
         let appleAction = UIAlertAction(title: "Pay", style: .default)
         let googleAction = UIAlertAction(title: "Google Pay", style: .default)
         alert.addAction(appleAction)
@@ -47,6 +69,7 @@ class CartTableViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: CartTableViewCell.identifier, for: indexPath) as? CartTableViewCell else { return UITableViewCell()}
+        cell.detailTextLabel?.text = "zxc"
         cell.configurate(menuArray[indexPath.row])
         amountPrice += cell.price
         return cell
@@ -69,6 +92,21 @@ class CartTableViewController: UITableViewController {
     }
     deinit {
         print("свободен Тейбл")
+    }
+    
+    //deleting rows
+    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+        return true
+    }
+    
+    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        if editingStyle == .delete {
+            let menuItem = menuArray[indexPath.row]
+            menuItem.ref?.removeValue()
+//            menuArray.remove(at: indexPath.row)
+//            tableView.deleteRows(at:[indexPath], with: .automatic)
+//           delegate?.updateMenu(menuArray: menuArray)
+        }
     }
 }
     

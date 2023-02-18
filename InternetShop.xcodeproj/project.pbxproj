@@ -15,6 +15,7 @@
 		F72856E929929427007463E1 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = F72856E829929427007463E1 /* FirebaseStorage */; };
 		F72856ED2992CCC3007463E1 /* RegisterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F72856EC2992CCC3007463E1 /* RegisterViewController.swift */; };
 		F72856F129942AD2007463E1 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = F72856F029942AD2007463E1 /* GoogleService-Info.plist */; };
+		F72856F3299BF208007463E1 /* AnimatedCircle.swift in Sources */ = {isa = PBXBuildFile; fileRef = F72856F2299BF207007463E1 /* AnimatedCircle.swift */; };
 		F729BE0B287C58A0004C7BF6 /* PresentViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F729BE0A287C58A0004C7BF6 /* PresentViewController.swift */; };
 		F729BE0D287C7934004C7BF6 /* CartTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F729BE0C287C7934004C7BF6 /* CartTableViewController.swift */; };
 		F729BE0F287C7975004C7BF6 /* CartTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F729BE0E287C7975004C7BF6 /* CartTableViewCell.swift */; };
@@ -42,6 +43,7 @@
 		F72856EB29929821007463E1 /* InternetShop.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = InternetShop.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F72856EC2992CCC3007463E1 /* RegisterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterViewController.swift; sourceTree = "<group>"; };
 		F72856F029942AD2007463E1 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		F72856F2299BF207007463E1 /* AnimatedCircle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimatedCircle.swift; sourceTree = "<group>"; };
 		F729BE0A287C58A0004C7BF6 /* PresentViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresentViewController.swift; sourceTree = "<group>"; };
 		F729BE0C287C7934004C7BF6 /* CartTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CartTableViewController.swift; sourceTree = "<group>"; };
 		F729BE0E287C7975004C7BF6 /* CartTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CartTableViewCell.swift; sourceTree = "<group>"; };
@@ -95,13 +97,21 @@
 			path = Pods;
 			sourceTree = "<group>";
 		};
+		F72856F4299BF215007463E1 /* Animations */ = {
+			isa = PBXGroup;
+			children = (
+				F7D8BC692942B8F6000FD7EA /* Animation.swift */,
+				F72856F2299BF207007463E1 /* AnimatedCircle.swift */,
+			);
+			path = Animations;
+			sourceTree = "<group>";
+		};
 		F77731DE28776C8C0011B5B8 /* Model */ = {
 			isa = PBXGroup;
 			children = (
 				F7D8BC67294158B3000FD7EA /* Protocols.swift */,
 				F77731DC28776C5A0011B5B8 /* Menu.swift */,
 				F7D8BC6B29456956000FD7EA /* DataFetching.swift */,
-				F7D8BC692942B8F6000FD7EA /* Animation.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -153,6 +163,7 @@
 			children = (
 				F7D123472810378F0008A0A5 /* AppDelegate.swift */,
 				F7D123492810378F0008A0A5 /* SceneDelegate.swift */,
+				F72856F4299BF215007463E1 /* Animations */,
 				F77731DE28776C8C0011B5B8 /* Model */,
 				F77731E228776E540011B5B8 /* VIew */,
 				F77731DF28776CB30011B5B8 /* Controller */,
@@ -278,6 +289,7 @@
 				F7A3B8E528284E050087B666 /* PageHelper.swift in Sources */,
 				F729BE0F287C7975004C7BF6 /* CartTableViewCell.swift in Sources */,
 				F729BE0B287C58A0004C7BF6 /* PresentViewController.swift in Sources */,
+				F72856F3299BF208007463E1 /* AnimatedCircle.swift in Sources */,
 				F7D8BC6C29456956000FD7EA /* DataFetching.swift in Sources */,
 				F77731E128776E4E0011B5B8 /* MenuCollectionViewCell.swift in Sources */,
 				F77731DD28776C5A0011B5B8 /* Menu.swift in Sources */,

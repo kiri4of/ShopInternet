@@ -109,11 +109,12 @@ class RegisterViewController: UIViewController {
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
-    
+    private var ref: DatabaseReference!
     private let viewsArray = [UIView]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        ref = Database.database(url: "https://internetshop-8e932-default-rtdb.firebaseio.com").reference(withPath: "users")
         //view = UIScrollView(frame: self.view.bounds)
         emailTextField.delegate = self
         passwordTextField.delegate = self
@@ -234,18 +235,21 @@ class RegisterViewController: UIViewController {
             return
         }
         
-        Auth.auth().createUser(withEmail: email, password: password) { result, error in
+        Auth.auth().createUser(withEmail: email, password: password) {[weak self] result, error in
             guard error == nil else {
-                self.displayErrorIfNeeded("Error occured!")
+                self?.displayErrorIfNeeded("Error occured!")
                 return
             }
-            
+            guard let user = result?.user else {return}
             if result != nil {
-                self.navigationController?.popViewController(animated: true)
+                let userRef = self?.ref.child(user.uid)
+                userRef?.setValue(["email": user.email])
+                self?.navigationController?.popViewController(animated: true)
             } else {
-                self.displayErrorIfNeeded("User is not created!")
+                self?.displayErrorIfNeeded("User is not created!")
             }
-            
+
+        
         }
     }
     

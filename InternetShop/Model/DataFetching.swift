@@ -63,7 +63,7 @@ func getFetchDataFromURLs(URLs: [Menu], complition: @escaping (Result<[Data],Err
     var dataArray = [Data]()
 
     for i in URLs {
-        guard let url = URL(string: i.imageURL!) else {return}
+        guard let url = URL(string: i.imageURL) else {return}
         dispatchGroup.enter()
         semaphore.wait()
         let dataTask = URLSession.shared.dataTask(with: url) { data, response, error in

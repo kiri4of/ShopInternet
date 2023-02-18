@@ -34,8 +34,8 @@ class MenuCollectionViewCell: UICollectionViewCell {
     var loadingDelegate: LoadingProtocol?
     
     func configurate(_ menu: Menu, image: UIImage){
-        guard let url = menu.imageURL else { return }
-        guard let name = menu.name else { return }
+        let url = menu.imageURL
+        let name = menu.name
         
         contentView.layer.borderColor = UIColor.black.cgColor
         contentView.layer.borderWidth = 0.05

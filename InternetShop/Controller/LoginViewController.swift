@@ -120,11 +120,13 @@ class LoginViewController: UIViewController {
         return button
     }()
     
+    private var ref: DatabaseReference!
     
     private var viewsArray: [UIView] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        ref = Database.database(url: "https://internetshop-8e932-default-rtdb.firebaseio.com").reference(withPath: "users")
         self.title = "Welcome"
         loginTextField.delegate = self
         passTextField.delegate = self

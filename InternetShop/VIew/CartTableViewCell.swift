@@ -42,12 +42,25 @@ class CartTableViewCell: UITableViewCell {
         return label
     }()
     
+    private let countLabel: UILabel = {
+       let label = UILabel()
+        label.textColor = .black
+        label.font = .systemFont(ofSize: 17, weight: .regular)
+        label.textAlignment = .left
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
+    private var count: Int!
+    
     func configurate(_ menu: Menu){
         contentView.addSubview(productImageView)
         contentView.addSubview(nameLabel)
         contentView.addSubview(priceLabel)
-        guard let imageURL = menu.imageURL else {return}
-        guard let labelName = menu.name else {return}
+        contentView.addSubview(countLabel)
+         let imageURL = menu.imageURL
+         let labelName = menu.name
+        count = menu.count
         //productImageView.image = UIImage(named: imageName)
        //getFetch(imageView: productImageView, menuItem: menu)
         getFetchData(urlString: imageURL) { result in
@@ -61,6 +74,7 @@ class CartTableViewCell: UITableViewCell {
             }
         }
         nameLabel.text = labelName
+        countLabel.text = "x" + (String(describing: count!))
         setPriceForMenu(menuItem: menu)
         configurateConstraints()
     }
@@ -74,7 +88,7 @@ class CartTableViewCell: UITableViewCell {
             price = 22.75
         }
         
-        priceLabel.text = "\(price) czk"
+        priceLabel.text = "\(price * Double(count)) czk"
     }
 
     
@@ -94,7 +108,10 @@ class CartTableViewCell: UITableViewCell {
             priceLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -10),
             priceLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 5),
             priceLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -5),
-            priceLabel.widthAnchor.constraint(equalToConstant: 100)
+            priceLabel.widthAnchor.constraint(equalToConstant: 100),
+        //countLabel
+            countLabel.leadingAnchor.constraint(equalTo: nameLabel.leadingAnchor),
+            countLabel.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: -30)
         ])
     }
     
